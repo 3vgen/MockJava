@@ -11,13 +11,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import tools.jackson.databind.ObjectMapper;
-
+import java.util.concurrent.ThreadLocalRandom;
 import java.awt.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @RestController
 public class MainController {
-
+    private final BigDecimal LIMIT_US = BigDecimal.valueOf(2000);
+    private final BigDecimal LIMIT_EU = BigDecimal.valueOf(1000);
+    private final BigDecimal LIMIT_RUB = BigDecimal.valueOf(10000);
     private Logger log = LoggerFactory.getLogger(MainController.class);
 
     private ObjectMapper mapper = new ObjectMapper();
@@ -32,26 +35,41 @@ public class MainController {
             String clientID = requestDTO.getClientId();
             char firstDigit = clientID.charAt(0);
             BigDecimal maxLimit;
-            String RqUID = requestDTO.getRqUID();
             String currency;
+            String RqUID = requestDTO.getRqUID();
+
             if (firstDigit == '8'){
-                maxLimit = new BigDecimal(2000);
+                maxLimit = LIMIT_US;
+                currency = "US";
             }
 
             else if(firstDigit == '9') {
-                maxLimit = new BigDecimal(1000);
+
+                maxLimit = LIMIT_EU;
+                currency = "EU";
+
             }
 
             else{
-                maxLimit = new BigDecimal(10000);
+                maxLimit = LIMIT_RUB;
+                currency = "RUB";
+
             }
+
+            BigDecimal balance = BigDecimal.valueOf(
+                            ThreadLocalRandom.current().nextDouble()
+                    ).multiply(maxLimit)
+                    .setScale(2, RoundingMode.HALF_UP);
+
+            long delayMs = ThreadLocalRandom.current().nextLong(1000, 2001);
+            Thread.sleep(delayMs);
 
             ResponseDTO responseDTO = new ResponseDTO(
                     RqUID,
                     clientID,
                     requestDTO.getAccount(),
-                    "US",
-                    new BigDecimal(7070),
+                    currency,
+                    balance,
                     maxLimit
             );
 
