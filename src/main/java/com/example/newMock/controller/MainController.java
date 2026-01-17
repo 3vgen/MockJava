@@ -18,9 +18,9 @@ import java.math.RoundingMode;
 
 @RestController
 public class MainController {
-    private final BigDecimal LIMIT_US = BigDecimal.valueOf(2000);
-    private final BigDecimal LIMIT_EU = BigDecimal.valueOf(1000);
-    private final BigDecimal LIMIT_RUB = BigDecimal.valueOf(10000);
+    private final BigDecimal LIMIT_US = BigDecimal.valueOf(5000);
+    private final BigDecimal LIMIT_EU = BigDecimal.valueOf(3500);
+    private final BigDecimal LIMIT_RUB = BigDecimal.valueOf(12121);
     private Logger log = LoggerFactory.getLogger(MainController.class);
 
     private ObjectMapper mapper = new ObjectMapper();
