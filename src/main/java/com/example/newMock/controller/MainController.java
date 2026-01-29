@@ -1,5 +1,6 @@
 package com.example.newMock.controller;
 
+import com.example.newMock.kafka.BalanceKafkaProducer;
 import com.example.newMock.model.RequestDTO;
 import com.example.newMock.model.ResponseDTO;
 import org.slf4j.Logger;
@@ -18,9 +19,14 @@ import java.math.RoundingMode;
 
 @RestController
 public class MainController {
+    private final BalanceKafkaProducer kafkaProducer;
+
+    public MainController(BalanceKafkaProducer kafkaProducer) {
+        this.kafkaProducer = kafkaProducer;
+    }
     private final BigDecimal LIMIT_US = BigDecimal.valueOf(5000);
     private final BigDecimal LIMIT_EU = BigDecimal.valueOf(3500);
-    private final BigDecimal LIMIT_RUB = BigDecimal.valueOf(12121);
+    private final BigDecimal LIMIT_RUB = BigDecimal.valueOf(33333);
     private Logger log = LoggerFactory.getLogger(MainController.class);
 
     private ObjectMapper mapper = new ObjectMapper();
@@ -75,6 +81,7 @@ public class MainController {
 
             log.info("*************** Запрос RequestDTO *******************" + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(requestDTO));
             log.info("*************** Ответ ResponseDTO *******************" + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(responseDTO));
+            kafkaProducer.send(responseDTO);
             return responseDTO;
         }
         catch (Exception e){
