@@ -6,14 +6,12 @@ import com.example.newMock.model.ResponseDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import tools.jackson.databind.ObjectMapper;
 import java.util.concurrent.ThreadLocalRandom;
-import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -24,20 +22,18 @@ public class MainController {
     public MainController(BalanceKafkaProducer kafkaProducer) {
         this.kafkaProducer = kafkaProducer;
     }
+
     private final BigDecimal LIMIT_US = BigDecimal.valueOf(5000);
     private final BigDecimal LIMIT_EU = BigDecimal.valueOf(3500);
     private final BigDecimal LIMIT_RUB = BigDecimal.valueOf(33333);
     private Logger log = LoggerFactory.getLogger(MainController.class);
-
     private ObjectMapper mapper = new ObjectMapper();
 
-    @PostMapping(
-            value = "info/postBalances",
-            produces = MediaType.APPLICATION_JSON_VALUE,
-            consumes = MediaType.APPLICATION_JSON_VALUE
-    )
-    public Object postBalances(@RequestBody RequestDTO requestDTO){
+    @PostMapping(value = "info/postBalances")
+    public Object postBalances(@RequestBody String body){
         try{
+            RequestDTO requestDTO = mapper.readValue(body, RequestDTO.class);
+
             String clientID = requestDTO.getClientId();
             char firstDigit = clientID.charAt(0);
             BigDecimal maxLimit;
@@ -48,18 +44,13 @@ public class MainController {
                 maxLimit = LIMIT_US;
                 currency = "US";
             }
-
             else if(firstDigit == '9') {
-
                 maxLimit = LIMIT_EU;
                 currency = "EU";
-
             }
-
             else{
                 maxLimit = LIMIT_RUB;
                 currency = "RUB";
-
             }
 
             BigDecimal balance = BigDecimal.valueOf(
@@ -87,7 +78,5 @@ public class MainController {
         catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-
     }
-
 }
