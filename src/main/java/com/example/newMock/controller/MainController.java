@@ -32,6 +32,7 @@ public class MainController {
     @PostMapping(value = "info/postBalances")
     public Object postBalances(@RequestBody String body){
         try{
+            // Парсим JSON из String вручную
             RequestDTO requestDTO = mapper.readValue(body, RequestDTO.class);
 
             String clientID = requestDTO.getClientId();
