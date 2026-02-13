@@ -1,0 +1,42 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'node_exporter_zagl'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['82.142.167.46:19101']
+
+  - job_name: 'node_exporter_lg'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['82.142.167.46:19100']
+
+  - job_name: 'node_exporter_boomq'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['82.142.167.44:19100']
+
+  - job_name: 'cadvisor_zagl'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['cadvisor:8080']
+
+  - job_name: 'cadvisor_lg'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['82.142.167.46:18081']
+
+  - job_name: 'cadvisor_boomq'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['82.142.167.44:18082']
+
+  - job_name: 'Mock'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['82.142.167.46:42082']
